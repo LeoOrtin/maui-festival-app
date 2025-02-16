@@ -1,0 +1,62 @@
+﻿using FestivalPlannerApp.Services;
+using FestivalPlannerApp.ViewModels;
+using FestivalPlannerApp.Views;
+using Microsoft.Extensions.Logging;
+
+namespace FestivalPlannerApp;
+
+public static class MauiProgram
+{
+	public static MauiApp CreateMauiApp()
+	{
+		var builder = MauiApp.CreateBuilder();
+		builder
+			.UseMauiApp<App>()
+			// Register ViewModels and Views
+			.RegisterViewModels()
+			.RegisterViews()
+			// Register App Services
+			.RegisterAppServices()
+			.ConfigureFonts(fonts =>
+			{
+				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+			});
+
+#if DEBUG
+		builder.Logging.AddDebug();
+#endif
+
+		return builder.Build();
+	}
+	public static MauiAppBuilder RegisterViews(this MauiAppBuilder builder)
+	{
+        builder.Services.AddTransient<LoadingPage>();
+        builder.Services.AddTransient<HomePage>();
+        builder.Services.AddTransient<MyFestivalsPage>();
+        builder.Services.AddTransient<NewFestivalPage>();
+        builder.Services.AddTransient<EditFestivalPage>();
+        builder.Services.AddTransient<FestivalInfoPage>();
+
+        return builder;
+    }
+
+    public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
+	{
+		builder.Services.AddTransient<HomeViewModel>();
+		builder.Services.AddTransient<MyFestivalsViewModel>();
+		builder.Services.AddTransient<NewFestivalViewModel>();
+        builder.Services.AddTransient<EditFestivalViewModel>();
+		builder.Services.AddTransient<FestivalInfoViewModel>();
+
+        return builder;
+	}
+    public static MauiAppBuilder RegisterAppServices(this MauiAppBuilder builder)
+    {
+		builder.Services.AddSingleton<ISpotifyService, SpotifyService>();
+        builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+        builder.Services.AddSingleton<IAlertService, AlertService>();
+
+        return builder;
+    }
+}
