@@ -7,9 +7,19 @@
     Shell.FlyoutBehavior="Flyout"
     Title="FestivalPlannerApp">
 
-    <ShellContent
+    <FlyoutItem
         Title="Home"
-        ContentTemplate="{DataTemplate views:HomePage}"
-        Route="MainPage" />
+        Icon="home.png">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate views:HomePage}"/>
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem
+    Title="My Festivals">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate views:MyFestivalsPage}"/>
+        </Tab>
+    </FlyoutItem>
+
 
 </Shell>
