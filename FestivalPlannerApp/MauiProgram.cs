@@ -31,7 +31,6 @@ public static class MauiProgram
 	}
 	public static MauiAppBuilder RegisterViews(this MauiAppBuilder builder)
 	{
-        builder.Services.AddTransient<LoadingPage>();
         builder.Services.AddTransient<HomePage>();
         builder.Services.AddTransient<MyFestivalsPage>();
         builder.Services.AddTransient<NewFestivalPage>();
