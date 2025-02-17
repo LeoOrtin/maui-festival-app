@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FestivalPlannerApp.Models.Database
+﻿namespace FestivalPlannerApp.Models
 {
-    class Day
+    public class Day
     {
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
 }
