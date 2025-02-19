@@ -4,7 +4,8 @@
              x:Class="FestivalPlannerApp.Views.MyFestivalsPage"
              xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
              x:DataType="viewModels:MyFestivalsViewModel"
-             Title="MyFestivalsPage">
+             Title="MyFestivalsPage"
+             Shell.TabBarIsVisible="False">
     <VerticalStackLayout>
         <Label 
             Text="Welcome to .NET MAUI!"

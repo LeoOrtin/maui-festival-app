@@ -5,7 +5,7 @@
              xmlns:models="clr-namespace:FestivalPlannerApp.Models"
              xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
              x:DataType="viewModels:HomeViewModel"
-             Title="Home">
+             Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="Auto, *">
         <CollectionView ItemsSource="{Binding TopArtists}"
                         ItemsLayout="VerticalGrid, 2"
@@ -32,6 +32,6 @@
                 FontSize="20"
                 HeightRequest="50"
                 WidthRequest="200"
-                Command="{Binding AddFestivalCommand>}"/>
+                Command="{Binding AddFestivalCommand}"/>
     </Grid>
 </ContentPage>

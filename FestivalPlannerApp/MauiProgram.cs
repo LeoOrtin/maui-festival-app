@@ -1,4 +1,5 @@
-﻿using FestivalPlannerApp.Services;
+﻿using CommunityToolkit.Maui;
+using FestivalPlannerApp.Services;
 using FestivalPlannerApp.ViewModels;
 using FestivalPlannerApp.Views;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
 			// Register ViewModels and Views
 			.RegisterViewModels()
 			.RegisterViews()
@@ -32,6 +34,7 @@ public static class MauiProgram
 	public static MauiAppBuilder RegisterViews(this MauiAppBuilder builder)
 	{
         builder.Services.AddTransient<HomePage>();
+		builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<MyFestivalsPage>();
         builder.Services.AddTransient<NewFestivalPage>();
         builder.Services.AddTransient<EditFestivalPage>();
@@ -43,6 +46,7 @@ public static class MauiProgram
     public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
 	{
 		builder.Services.AddTransient<HomeViewModel>();
+		builder.Services.AddTransient<LoginViewModel>();
 		builder.Services.AddTransient<MyFestivalsViewModel>();
 		builder.Services.AddTransient<NewFestivalViewModel>();
         builder.Services.AddTransient<EditFestivalViewModel>();

@@ -8,7 +8,7 @@ namespace FestivalPlannerApp.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string? Name { get; set; }
-        List<string>? Stages { get; set; }
+        public List<Stage>? Stages { get; set; }
         public List<Day>? Days { get; set; }
     }
 }
