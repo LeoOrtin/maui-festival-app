@@ -7,7 +7,7 @@
              x:DataType="viewModels:HomeViewModel"
              Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="Auto, *">
-        <CollectionView ItemsSource="{Binding TopArtists}"
+        <CollectionView ItemsSource="{Binding}"
                         ItemsLayout="VerticalGrid, 2"
                         Grid.Row="0">
             <CollectionView.ItemTemplate>

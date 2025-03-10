@@ -1,15 +1,104 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="FestivalPlannerApp.Views.MyFestivalsPage"
+             x:Name="MyFestivalscontentPage"
+             xmlns:models="clr-namespace:FestivalPlannerApp.Models"
              xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
              x:DataType="viewModels:MyFestivalsViewModel"
-             Title="MyFestivalsPage"
              Shell.TabBarIsVisible="False">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <RefreshView Command="{Binding RefreshCommand}"
+                 IsRefreshing="{Binding IsRefreshing}">
+        <VerticalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center"
+                                   Spacing="50">
+                <VerticalStackLayout HorizontalOptions="Start">
+                    <ImageButton Source="refresh.png"
+                                 HeightRequest="30"
+                                 WidthRequest="30"
+                                 BackgroundColor="White"
+                                 CornerRadius="5"
+                                 Command="{Binding RefreshCommand}"/>
+                    <Label Text="Refresh"
+                           FontSize="Micro"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+                <Label Text="Saved Festivals"
+                       HorizontalOptions="Start"
+                       FontSize="Large"
+                       FontAttributes="Bold"/>
+                <VerticalStackLayout HorizontalOptions="Start">
+                    <ImageButton Source="add.png"
+                                 HeightRequest="30"
+                                 WidthRequest="30"
+                                 BackgroundColor="White"
+                                 CornerRadius="5"
+                                 Command="{Binding NewFestivalCommand}"/>
+                    <Label Text="Add Festival"
+                           FontSize="Micro"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+            <CollectionView ItemsSource="{Binding MyFestivals}"
+                            EmptyView="There are no saved festivals yet">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Festival">
+                        <Border>
+                            <StackLayout Orientation="Horizontal"
+                                         Padding="10"
+                                         Margin="10"
+                                         Spacing="20">
+                                <StackLayout Orientation="Vertical"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center">
+                                    <Label Text="{Binding Name}"
+                                           FontSize="Medium"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center"/>
+                                    <Label Text="{Binding StartDate, StringFormat='From: {0:MM/dd/yyyy}'}"
+                                           FontSize="Small"/>
+                                    <Label Text="{Binding EndDate, StringFormat='To: {0:MM/dd/yyyy}'}"
+                                           FontSize="Small"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Vertical"
+                                             HorizontalOptions="End">
+                                    <ImageButton Source="view.png"
+                                                 HeightRequest="30"
+                                                 WidthRequest="30"
+                                                 BackgroundColor="White"
+                                                 CornerRadius="5"
+                                                 CommandParameter="{Binding .}"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}, Path=ViewFestivalCommand}"/>
+                                    <ImageButton Source="edit.png"
+                                                 HeightRequest="30"
+                                                 WidthRequest="30"
+                                                 BackgroundColor="White"
+                                                 CornerRadius="5"
+                                                 CommandParameter="{Binding .}"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}, Path=EditFestivalCommand}"/>
+                                    <ImageButton Source="delete.png"
+                                                 HeightRequest="30"
+                                                 WidthRequest="30"
+                                                 BackgroundColor="White"
+                                                 CornerRadius="5"
+                                                 CommandParameter="{Binding .}"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}, Path=DeleteFestivalCommand}"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <ActivityIndicator IsVisible="{Binding IsBusy}"
+                               IsRunning="{Binding IsBusy}"
+                               HorizontalOptions="Fill"
+                               VerticalOptions="Center"/>
+        </VerticalStackLayout>
+    </RefreshView>
 </ContentPage>

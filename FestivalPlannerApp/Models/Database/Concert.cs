@@ -2,16 +2,17 @@
 
 namespace FestivalPlannerApp.Models
 {
-    [Table("Concerts")]
+    [Table("concerts")]
     public class Concert
     {
-        [PrimaryKey]
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         [Indexed]
         public int FestivalId { get; set; }
-        public string? Stage { get; set; }
+        public int StageId { get; set; }
+        public int DayId { get; set; }
         public string? ArtistName { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
     }
 }

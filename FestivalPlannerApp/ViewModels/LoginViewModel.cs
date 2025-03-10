@@ -5,7 +5,7 @@ using FestivalPlannerApp.Views;
 
 namespace FestivalPlannerApp.ViewModels
 {
-    public partial class LoginViewModel (ISpotifyService spotifyService, IAlertService alertService) : ObservableObject
+    public partial class LoginViewModel (ISpotifyService spotifyService, IAlertService alertService) : BaseViewModel
     {
         private readonly ISpotifyService _spotifyService = spotifyService;
         private readonly IAlertService _alertService = alertService;

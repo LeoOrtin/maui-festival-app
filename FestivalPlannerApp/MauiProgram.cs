@@ -39,6 +39,7 @@ public static class MauiProgram
         builder.Services.AddTransient<NewFestivalPage>();
         builder.Services.AddTransient<EditFestivalPage>();
         builder.Services.AddTransient<FestivalInfoPage>();
+		builder.Services.AddTransient<EditConcertPage>();
 
         return builder;
     }
@@ -51,6 +52,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<NewFestivalViewModel>();
         builder.Services.AddTransient<EditFestivalViewModel>();
 		builder.Services.AddTransient<FestivalInfoViewModel>();
+		builder.Services.AddTransient<EditConcertViewModel>();
 
         return builder;
 	}

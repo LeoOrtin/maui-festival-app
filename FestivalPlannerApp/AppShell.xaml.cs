@@ -20,6 +20,7 @@ namespace FestivalPlannerApp
 
             Routing.RegisterRoute(nameof(MyFestivalsPage), typeof(MyFestivalsPage));
 
+            Routing.RegisterRoute(nameof(EditConcertPage), typeof(EditConcertPage));
         }
     }
 }

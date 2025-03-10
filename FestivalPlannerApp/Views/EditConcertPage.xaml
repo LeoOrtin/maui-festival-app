@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="FestivalPlannerApp.Views.EditConcertPage"
+             xmlns:models="clr-namespace:FestivalPlannerApp.Models"
+             xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
+             x:DataType="viewModels:EditConcertViewModel"
+             x:Name="EditConcertContentPage"
+             Title=""         
+             Shell.TabBarIsVisible="False">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior 
+            EventName="NavigatedTo"
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference EditConcertContentPage}, x:DataType=ContentPage}"
+            Command="{Binding NavigatedToCommand}"/>
+    </ContentPage.Behaviors>
+    <Grid RowDefinitions="Auto,*,*,100,*"
+          ColumnDefinitions="*,*"
+          Padding="20"
+          RowSpacing="100">
+        <Border HorizontalOptions="Fill"
+                Grid.ColumnSpan="2">
+            <StackLayout>
+                <SearchBar Text="{Binding CurrentConcert.ArtistName}"  
+                           Placeholder="Search Artist"
+                           FontSize="Medium"
+                           HorizontalOptions="Center"
+                           />
+            </StackLayout>
+        </Border>
+        <Picker Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Title="Select stage"
+                ItemsSource="{Binding Stages}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedStage}"
+                HorizontalOptions="Fill"
+                HorizontalTextAlignment="Center"/>
+        <DatePicker x:Name="DayPicker" 
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Date="{Binding SelectedDay.StartDateTime}"
+                    HorizontalOptions="Center"
+                    MinimumDate="{Binding CurrentFestival.StartDate}"
+                    MaximumDate="{Binding CurrentFestival.EndDate}">
+            <DatePicker.Behaviors>
+                <toolkit:EventToCommandBehavior 
+                    EventName="DateSelected"
+                    BindingContext="{Binding Path=BindingContext, Source={x:Reference DayPicker}, x:DataType=DatePicker}"
+                    Command="{Binding DateSelectionCommand}"/>
+            </DatePicker.Behaviors>
+        </DatePicker>
+        <Border Grid.Row="3"
+                Margin="10">
+            <Picker x:Name="StartPicker" Title="Select start time"
+                    ItemsSource="{Binding StartTimeSlots}"
+                    ItemDisplayBinding="{Binding ., StringFormat='{0:hh\\:mm}'}"
+                    SelectedItem="{Binding CurrentConcert.StartTime}">
+                <Picker.Behaviors>
+                    <toolkit:EventToCommandBehavior 
+                        EventName="SelectedIndexChanged"
+                        BindingContext="{Binding Path=BindingContext, Source={x:Reference StartPicker}, x:DataType=Picker}"
+                        Command="{Binding StartTimeSelectionCommand}"/>
+                </Picker.Behaviors>
+            </Picker>
+        </Border>
+        <Border Grid.Row="3"
+                Grid.Column="1"
+                Margin="10">
+            <Picker Title="Select end time"
+                    ItemsSource="{Binding EndTimeSlots}"
+                    ItemDisplayBinding="{Binding ., StringFormat='{0:hh\\:mm}'}"
+                    SelectedItem="{Binding CurrentConcert.EndTime}"/>
+        </Border>
+        <Button Grid.Row="4"
+                Text="Cancel"
+                VerticalOptions="Center"
+                WidthRequest="100"
+                FontSize="Medium"
+                BackgroundColor="Salmon"
+                Command="{Binding CancelCommand}"/>
+        <Button Grid.Row="4"
+                Grid.Column="1"
+                Text="Save"
+                VerticalOptions="Center"
+                WidthRequest="100"
+                FontSize="Medium"
+                Command="{Binding SaveCommand}"/>
+    </Grid>
+</ContentPage>

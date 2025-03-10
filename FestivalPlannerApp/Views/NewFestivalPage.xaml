@@ -9,7 +9,7 @@
              x:DataType="viewModels:NewFestivalViewModel"
              Title="Add New Festival"
              Shell.TabBarIsVisible="False">
-    <Grid RowDefinitions="50,50,90,115,170,*"
+    <Grid RowDefinitions="50,50,90,115,Auto,*"
           Padding="5"
           Margin="20,0,20,0"
           RowSpacing="15">
@@ -84,11 +84,13 @@
                     <Grid RowDefinitions="*,*"
                           ColumnDefinitions="20,100,Auto,Auto,Auto"
                           ColumnSpacing="10">
-                        <DatePicker x:Name="StartDatePicker" Grid.Row="0"
+                        <DatePicker x:Name="StartDatePicker" 
+                                    Grid.Row="0"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="2"
-                                    Date ="{Binding NewDay.StartDateTime}"
+                                    Date ="{Binding NewDay.StartDateTime, Mode=TwoWay}"
                                     MinimumDate="{Binding NewDay.MinStartDateTime}"
+                                    MaximumDate="{Binding NewDay.MaxStartDateTime}"
                                     VerticalOptions="Center"
                                     FontSize="Small"
                                     Format="ddd, dd MMM yyyy">
@@ -142,7 +144,19 @@
                 </Border>
             </VerticalStackLayout>
         </Border>
-        <Border Grid.Row="4">
+        <Grid Grid.Row="4"
+              RowDefinitions="Auto,*">
+            <Button Text="Delete last day"
+        FontSize="Micro"
+        HorizontalOptions="Center"
+        BackgroundColor="White"
+        TextColor="Salmon"
+        BorderColor="Salmon"
+        BorderWidth="1"
+        Margin="5"
+        Command="{Binding DeleteDayCommand}"/>
+        <Border Grid.Row="1"
+                HeightRequest="170">
             <CollectionView ItemsSource="{Binding Days}"
                             SelectionMode="None">
                 <CollectionView.ItemTemplate>
@@ -166,24 +180,19 @@
                                        Grid.Column="1"
                                        Text="Finishing after midnight?"/>
                                 <Label Grid.Column="2" 
-                                       Text="{Binding StartDateTime, StringFormat='Start: {0:HH-mm}'}"
+                                       Text="{Binding StartDateTime, StringFormat='Start: {0:HH:mm}'}"
                                        Margin="30,20,0,0"/>
                                 <Label Grid.Column="2"
                                        Grid.Row="2"
                                        Text="{Binding EndDateTime, StringFormat='End: {0:HH-mm}'}"
                                        Margin="30,20,0,0"/>
-                                <ImageButton Grid.Column="3"
-                                             Grid.RowSpan="2"
-                                             Source="delete.png"
-                                             WidthRequest="10"
-                                             HeightRequest="10"
-                                             Command="{Binding DeleteDayCommand}"/>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Border>
+        </Grid>
         <StackLayout Grid.Row="5"
                      Orientation="Horizontal"
                      HorizontalOptions="Center"
@@ -201,5 +210,10 @@
                     Command="{Binding SaveCommand}">
             </Button>
         </StackLayout>
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="Fill"
+                           VerticalOptions="Center"
+                           Grid.RowSpan="6"/>
     </Grid>
 </ContentPage>
