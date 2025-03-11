@@ -1,4 +1,3 @@
-using FestivalPlannerApp.Services;
 using FestivalPlannerApp.ViewModels;
 
 namespace FestivalPlannerApp.Views;

@@ -18,7 +18,7 @@
     </ContentPage.Behaviors>
     <ScrollView Orientation="Vertical">
         <ScrollView Orientation="Horizontal">
-            <StackLayout>
+            <VerticalStackLayout>
                 <CollectionView ItemsSource="{Binding Days}"
                                 IsVisible="{Binding IsNotBusy}">
                     <CollectionView.ItemTemplate>
@@ -57,7 +57,6 @@
                                                 <HorizontalStackLayout>
                                                     <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}"
                                                            FontSize="13"/>
-
                                                     <CollectionView ItemsSource="{Binding StageEvents.Values}"
                                                                     ItemsLayout="HorizontalList"
                                                                     Margin="10,0,0,0">
@@ -76,7 +75,6 @@
                                                             </DataTemplate>
                                                         </CollectionView.ItemTemplate>
                                                     </CollectionView>
-
                                                 </HorizontalStackLayout>
                                             </DataTemplate>
                                         </CollectionView.ItemTemplate>
@@ -92,7 +90,7 @@
                                    IsRunning="{Binding IsBusy}"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center"/>
-            </StackLayout>
+            </VerticalStackLayout>
         </ScrollView>
     </ScrollView>
 </ContentPage>

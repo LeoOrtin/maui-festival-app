@@ -15,20 +15,37 @@
             BindingContext="{Binding Path=BindingContext, Source={x:Reference EditConcertContentPage}, x:DataType=ContentPage}"
             Command="{Binding NavigatedToCommand}"/>
     </ContentPage.Behaviors>
-    <Grid RowDefinitions="Auto,*,*,100,*"
+    <Grid RowDefinitions="Auto,150,100,100,*"
           ColumnDefinitions="*,*"
           Padding="20"
-          RowSpacing="100">
-        <Border HorizontalOptions="Fill"
-                Grid.ColumnSpan="2">
-            <StackLayout>
-                <SearchBar Text="{Binding CurrentConcert.ArtistName}"  
-                           Placeholder="Search Artist"
-                           FontSize="Medium"
-                           HorizontalOptions="Center"
-                           />
-            </StackLayout>
-        </Border>
+          RowSpacing="0">
+        <VerticalStackLayout Grid.ColumnSpan="2">
+            <SearchBar x:Name="ArtistsSearchBar"
+                        Placeholder="Search for an artist"
+                        Text="{Binding SearchText, Mode=TwoWay}">
+            </SearchBar>
+            <CollectionView ItemsSource="{Binding ArtistsResult}">
+            <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Artist">
+                        <Border Opacity="1"
+                                BackgroundColor="Beige">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EditConcertViewModel}}, Path=ArtistSelectionCommand}"
+                                                      CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout>
+                                <Image Source="{Binding Images[0].Url}"
+                                            WidthRequest="65"
+                                            HeightRequest="65"
+                                            Aspect="AspectFill"/>
+                                <Label Text="{Binding Name}"
+                                        VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
         <Picker Grid.Row="1"
                 Grid.ColumnSpan="2"
                 Title="Select stage"
@@ -36,7 +53,8 @@
                 ItemDisplayBinding="{Binding Name}"
                 SelectedItem="{Binding SelectedStage}"
                 HorizontalOptions="Fill"
-                HorizontalTextAlignment="Center"/>
+                HorizontalTextAlignment="Center"
+                Margin="50"/>
         <DatePicker x:Name="DayPicker" 
                     Grid.Row="2"
                     Grid.ColumnSpan="2"
@@ -53,10 +71,11 @@
         </DatePicker>
         <Border Grid.Row="3"
                 Margin="10">
-            <Picker x:Name="StartPicker" Title="Select start time"
+            <Picker x:Name="StartPicker" 
+                    Title="Select start time"
                     ItemsSource="{Binding StartTimeSlots}"
                     ItemDisplayBinding="{Binding ., StringFormat='{0:hh\\:mm}'}"
-                    SelectedItem="{Binding CurrentConcert.StartTime}">
+                    SelectedItem="{Binding SelectedStartTime}">
                 <Picker.Behaviors>
                     <toolkit:EventToCommandBehavior 
                         EventName="SelectedIndexChanged"
@@ -68,18 +87,26 @@
         <Border Grid.Row="3"
                 Grid.Column="1"
                 Margin="10">
-            <Picker Title="Select end time"
+            <Picker x:Name="EndPicker" 
+                    Title="Select end time"
                     ItemsSource="{Binding EndTimeSlots}"
                     ItemDisplayBinding="{Binding ., StringFormat='{0:hh\\:mm}'}"
-                    SelectedItem="{Binding CurrentConcert.EndTime}"/>
+                    SelectedItem="{Binding SelectedEndTime}">
+                <Picker.Behaviors>
+                    <toolkit:EventToCommandBehavior 
+                        EventName="SelectedIndexChanged"
+                        BindingContext="{Binding Path=BindingContext, Source={x:Reference EndPicker}, x:DataType=Picker}"
+                        Command="{Binding EndTimeSelectionCommand}"/>
+                </Picker.Behaviors>
+            </Picker>
         </Border>
         <Button Grid.Row="4"
-                Text="Cancel"
+                Text="Delete"
                 VerticalOptions="Center"
                 WidthRequest="100"
                 FontSize="Medium"
                 BackgroundColor="Salmon"
-                Command="{Binding CancelCommand}"/>
+                Command="{Binding DeleteCommand}"/>
         <Button Grid.Row="4"
                 Grid.Column="1"
                 Text="Save"

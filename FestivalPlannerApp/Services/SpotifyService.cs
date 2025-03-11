@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using FestivalPlannerApp.Models;
+using FestivalPlannerApp.Models.Spotify;
 
 namespace FestivalPlannerApp.Services
 {
@@ -54,8 +55,6 @@ namespace FestivalPlannerApp.Services
             {
                 Content = content
             };
-
-
             try
             {
                 HttpResponseMessage response = await _client.SendAsync(request);
@@ -96,10 +95,10 @@ namespace FestivalPlannerApp.Services
             }
             await _alertService.ShowAlert("Success", "Logged in!");
         }
-        public async Task<List<Artist>> GetTopArtists()
+        public async Task<List<Artist>> SearchArtists(string query)
         {
-            List<Artist>? topArtists = new List<Artist>();
-            Uri uri = new($"https://api.spotify.com/v1/me/top/artists?limit=4");
+            ArtistsResult? result = new();
+            Uri uri = new($"https://api.spotify.com/v1/search?q={query}&type=artist&limit=10");
             HttpRequestMessage request = new(HttpMethod.Get, uri);
             string accessToken = Preferences.Get("access_token", string.Empty);
             request.Headers.Add("Authorization", "Bearer " + accessToken);
@@ -110,17 +109,18 @@ namespace FestivalPlannerApp.Services
                 {
                     await RefreshToken();
                     accessToken = Preferences.Get("access_token", string.Empty);
-                    request.Headers.Add("Authorization", "Bearer " + accessToken);
-                    response = await _client.SendAsync(request);
+                    HttpRequestMessage newRequest = new(HttpMethod.Get, uri);
+                    newRequest.Headers.Add("Authorization", "Bearer " + accessToken);
+                    response = await _client.SendAsync(newRequest);
                 }
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     JsonDocument jsonDocument = JsonDocument.Parse(content);
                     JsonElement root = jsonDocument.RootElement;
-                    if (root.TryGetProperty("items", out JsonElement items))
+                    if (root.TryGetProperty("artists", out JsonElement artists))
                     {
-                        topArtists = JsonSerializer.Deserialize<List<Artist>>(items.GetRawText(), _serializerOptions);
+                        result = JsonSerializer.Deserialize<ArtistsResult>(artists.GetRawText(), _serializerOptions);
                     }
                 }
             }
@@ -128,7 +128,37 @@ namespace FestivalPlannerApp.Services
             {
                 Debug.WriteLine($"\tERROR {0}", ex.Message);
             }
-            return topArtists ?? new List<Artist>();
+            return result?.Items ?? new List<Artist>();
+        }
+        public async Task<List<Artist>> GetTopArtists()
+        {
+            ArtistsResult? result = new();
+            Uri uri = new($"https://api.spotify.com/v1/me/top/artists");
+            HttpRequestMessage request = new(HttpMethod.Get, uri);
+            string accessToken = Preferences.Get("access_token", string.Empty);
+            request.Headers.Add("Authorization", "Bearer " + accessToken);
+            try
+            {
+                HttpResponseMessage response = await _client.SendAsync(request);
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    await RefreshToken();
+                    accessToken = Preferences.Get("access_token", string.Empty);
+                    HttpRequestMessage newRequest = new(HttpMethod.Get, uri);
+                    newRequest.Headers.Add("Authorization", "Bearer " + accessToken);
+                    response = await _client.SendAsync(newRequest);
+                }
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    result = JsonSerializer.Deserialize<ArtistsResult>(content, _serializerOptions);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"\tERROR {0}", ex.Message);
+            }
+            return result?.Items ?? new List<Artist>();
         }
 
         private static readonly Func<int, string> generateRandomString = length =>
@@ -193,7 +223,7 @@ namespace FestivalPlannerApp.Services
             }
             return null;
         }
-        public async Task<bool> RefreshToken()
+        private async Task<bool> RefreshToken()
         {
             Token? Token;
             Uri uri = new($"https://accounts.spotify.com/api/token");;
@@ -204,8 +234,6 @@ namespace FestivalPlannerApp.Services
                     new KeyValuePair<string, string>("refresh_token", refreshToken),
                     new KeyValuePair<string, string>("client_id", clientId)
                 ]);
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-
             HttpRequestMessage request = new(HttpMethod.Post, uri)
             {
                 Content = content

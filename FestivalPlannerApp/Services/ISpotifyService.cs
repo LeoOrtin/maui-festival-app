@@ -7,6 +7,7 @@ namespace FestivalPlannerApp.Services
         Task<bool> Authenticate();
         bool IsSignedIn();
         Task SignOut();
+        Task<List<Artist>> SearchArtists(string query);
         Task<List<Artist>> GetTopArtists();
     }
 }

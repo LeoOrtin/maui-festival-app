@@ -9,7 +9,9 @@ namespace FestivalPlannerApp.Models
         public int Id { get; set; }
         [Indexed]
         public int FestivalId { get; set; }
+        [Indexed]
         public int StageId { get; set; }
+        [Indexed]
         public int DayId { get; set; }
         public string? ArtistName { get; set; }
         public TimeSpan StartTime { get; set; }

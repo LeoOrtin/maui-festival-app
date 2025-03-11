@@ -15,7 +15,7 @@
             BindingContext="{Binding Path=BindingContext, Source={x:Reference LoginContentPage}, x:DataType=ContentPage}"
             Command="{Binding AppearingCommand}"/>
     </ContentPage.Behaviors>
-    <Grid RowDefinitions="*, 100, 100, 50, 50, *" 
+    <Grid RowDefinitions="*,100,100,50,50,*" 
           >
         <Label Text="Welcome to Festival Planner!"
                FontSize="Large"

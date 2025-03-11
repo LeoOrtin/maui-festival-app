@@ -50,6 +50,9 @@ public class DatabaseService : IDatabaseService
     }
     public async Task DeleteFestivalAsync(Festival festival)
     {
+        await connection.ExecuteAsync("DELETE FROM concerts WHERE FestivalId = ?", festival.Id);
+        await connection.ExecuteAsync("DELETE FROM stages WHERE FestivalId = ?", festival.Id);
+        await connection.ExecuteAsync("DELETE FROM days WHERE FestivalId = ?", festival.Id);
         await connection.DeleteAsync(festival);
     }
     public async Task AddStageAsync(Stage stage, int festivalId)
@@ -90,8 +93,8 @@ public class DatabaseService : IDatabaseService
     {
         await connection.UpdateAsync(concert);
     }
-    public Task DeleteConcertAsync(Concert concert)
+    public async Task DeleteConcertAsync(Concert concert)
     {
-        throw new NotImplementedException();
+        await connection.DeleteAsync(concert);
     }
 }
