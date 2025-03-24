@@ -1,7 +1,6 @@
-﻿namespace FestivalPlannerApp.Models
+﻿namespace FestivalPlannerApp.Models;
+
+public class ExternalUrls
 {
-    public class ExternalUrls
-    {
-        public string Spotify { get; set; } = string.Empty;
-    }
+    public string Spotify { get; set; } = string.Empty;
 }

@@ -1,6 +1,6 @@
 ﻿namespace FestivalPlannerApp.Models;
 
-public class ArtistsResult
+public class TracksResult
 {
     public string Href { get; set; } = string.Empty;
     public int Limit { get; set; }
@@ -8,5 +8,5 @@ public class ArtistsResult
     public int Offset { get; set; }
     public string Previous { get; set; } = string.Empty;
     public int Total { get; set; }
-    public List<Artist> Items { get; set; } = [];
+    public List<Track> Items { get; set; } = [];
 }

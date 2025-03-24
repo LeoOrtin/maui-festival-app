@@ -10,6 +10,9 @@
              x:DataType="viewModels:EditFestivalViewModel"
              Title="EditFestivalPage"
              Shell.TabBarIsVisible="False">
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding BackButtonCommand}"/>
+    </Shell.BackButtonBehavior>
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior 
             EventName="NavigatedTo"
@@ -34,7 +37,7 @@
                                           ColumnDefinitions="42,*"
                                           Margin="0,0,0,10">
                                         <CollectionView Grid.Column="1"
-                                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}, Path=Stages}"
+                                                        ItemsSource="{Binding Stages, x:DataType=viewModels:EditFestivalViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}}"
                                                         ItemsLayout="HorizontalList">
                                             <CollectionView.ItemTemplate>
                                                 <DataTemplate x:DataType="models:Stage">
@@ -65,7 +68,7 @@
                                                                 <Border WidthRequest="100"
                                                                         HeightRequest="20">
                                                                     <Border.GestureRecognizers>
-                                                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}, Path=EditConcertCommand}"
+                                                                        <TapGestureRecognizer Command="{Binding EditConcertCommand, x:DataType=viewModels:EditFestivalViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}}"
                                                                                               CommandParameter="{Binding .}"/>
                                                                     </Border.GestureRecognizers>
                                                                     <Label Text="{Binding .}"
@@ -84,12 +87,11 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                <ActivityIndicator BindingContext="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}}"
-                                   x:DataType="viewModels:EditFestivalViewModel"
-                                   IsVisible="{Binding IsBusy}"
+                <ActivityIndicator IsVisible="{Binding IsBusy}"
                                    IsRunning="{Binding IsBusy}"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"/>
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Fill"
+                                   />
             </VerticalStackLayout>
         </ScrollView>
     </ScrollView>

@@ -8,6 +8,12 @@
              xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
              x:DataType="viewModels:MyFestivalsViewModel"
              Shell.TabBarIsVisible="False">
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior 
+            EventName="NavigatedTo"
+            BindingContext="{Binding Path=BindingContext, Source={x:Reference MyFestivalscontentPage}, x:DataType=ContentPage}"
+            Command="{Binding NavigatedToCommand}"/>
+    </ContentPage.Behaviors>
     <RefreshView Command="{Binding RefreshCommand}"
                  IsRefreshing="{Binding IsRefreshing}">
         <VerticalStackLayout>
@@ -68,21 +74,21 @@
                                                  BackgroundColor="White"
                                                  CornerRadius="5"
                                                  CommandParameter="{Binding .}"
-                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}, Path=ViewFestivalCommand}"/>
+                                                 Command="{Binding ViewFestivalCommand, x:DataType=viewModels:MyFestivalsViewModel, Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}}"/>
                                     <ImageButton Source="edit.png"
                                                  HeightRequest="30"
                                                  WidthRequest="30"
                                                  BackgroundColor="White"
                                                  CornerRadius="5"
                                                  CommandParameter="{Binding .}"
-                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}, Path=EditFestivalCommand}"/>
+                                                 Command="{Binding EditFestivalCommand, x:DataType=viewModels:MyFestivalsViewModel, Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}}"/>
                                     <ImageButton Source="delete.png"
                                                  HeightRequest="30"
                                                  WidthRequest="30"
                                                  BackgroundColor="White"
                                                  CornerRadius="5"
                                                  CommandParameter="{Binding .}"
-                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}, Path=DeleteFestivalCommand}"/>
+                                                 Command="{Binding DeleteFestivalCommand, x:DataType=viewModels:MyFestivalsViewModel, Source={RelativeSource AncestorType={x:Type viewModels:MyFestivalsViewModel}}}"/>
                                 </StackLayout>
                             </StackLayout>
                         </Border>

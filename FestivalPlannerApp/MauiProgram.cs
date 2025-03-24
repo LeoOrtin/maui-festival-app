@@ -33,26 +33,28 @@ public static class MauiProgram
 	}
 	public static MauiAppBuilder RegisterViews(this MauiAppBuilder builder)
 	{
-        builder.Services.AddTransient<HomePage>();
-		builder.Services.AddTransient<LoginPage>();
+        builder.Services.AddTransient<LoginPage>();
+        builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<MyFestivalsPage>();
         builder.Services.AddTransient<NewFestivalPage>();
-        builder.Services.AddTransient<EditFestivalPage>();
-        builder.Services.AddTransient<FestivalInfoPage>();
-		builder.Services.AddTransient<EditConcertPage>();
+
+        builder.Services.AddSingleton<EditFestivalPage>();
+        builder.Services.AddSingleton<FestivalInfoPage>();
+		builder.Services.AddSingleton<EditConcertPage>();
 
         return builder;
     }
 
     public static MauiAppBuilder RegisterViewModels(this MauiAppBuilder builder)
 	{
-		builder.Services.AddTransient<HomeViewModel>();
 		builder.Services.AddTransient<LoginViewModel>();
-		builder.Services.AddTransient<MyFestivalsViewModel>();
+        builder.Services.AddTransient<ProfileViewModel>();
+        builder.Services.AddTransient<MyFestivalsViewModel>();
 		builder.Services.AddTransient<NewFestivalViewModel>();
-        builder.Services.AddTransient<EditFestivalViewModel>();
-		builder.Services.AddTransient<FestivalInfoViewModel>();
-		builder.Services.AddTransient<EditConcertViewModel>();
+
+        builder.Services.AddSingleton<EditFestivalViewModel>();
+		builder.Services.AddSingleton<FestivalInfoViewModel>();
+		builder.Services.AddSingleton<EditConcertViewModel>();
 
         return builder;
 	}

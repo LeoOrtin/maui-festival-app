@@ -1,8 +1,7 @@
-﻿namespace FestivalPlannerApp.Models
+﻿namespace FestivalPlannerApp.Models;
+
+public class Followers
 {
-    public class Followers
-    {
-        public string? Href { get; set; }
-        public int Total { get; set; }
-    }
+    public string? Href { get; set; }
+    public int Total { get; set; }
 }

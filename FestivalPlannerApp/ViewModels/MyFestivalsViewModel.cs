@@ -5,133 +5,146 @@ using FestivalPlannerApp.Services;
 using FestivalPlannerApp.Views;
 using System.Collections.ObjectModel;
 
-namespace FestivalPlannerApp.ViewModels
+namespace FestivalPlannerApp.ViewModels;
+
+public partial class MyFestivalsViewModel : BaseViewModel
 {
-    public partial class MyFestivalsViewModel : BaseViewModel
+    private readonly IDatabaseService _databaseService;
+    private readonly IAlertService _alertService;
+    [ObservableProperty]
+    public partial bool IsRefreshing { get; set; }
+    [ObservableProperty]
+    public partial ObservableCollection<Festival>? MyFestivals {  get; set; }
+    public MyFestivalsViewModel(IDatabaseService databaseService, IAlertService alertService)
     {
-        private readonly IDatabaseService _databaseService;
-        private readonly IAlertService _alertService;
-        [ObservableProperty]
-        public partial bool IsRefreshing { get; set; }
-        [ObservableProperty]
-        public partial ObservableCollection<Festival>? MyFestivals {  get; set; }
-        public MyFestivalsViewModel(IDatabaseService databaseService, IAlertService alertService)
+        _databaseService = databaseService;
+        _alertService = alertService;
+    }
+    [RelayCommand]
+    public async Task NavigatedTo()
+    {
+        if (IsBusy)
+            return;
+        try
         {
-            _databaseService = databaseService;
-            _alertService = alertService;
-            LoadFestivals();
-        }
-        public async void LoadFestivals()
-        {
+            IsBusy = true;
             MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync());
         }
-        [RelayCommand]
-        public async Task Refresh()
+        catch (Exception ex)
         {
-            if (IsBusy)
-                return;
-            try
-            {
-                IsBusy = true;
-                MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync());
-                IsRefreshing = false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            Console.WriteLine(ex.Message);
         }
-        [RelayCommand]
-        public async Task NewFestival()
+        finally
         {
-            if (IsBusy)
-                return;
-            try
-            {
-                IsBusy = true;
-                await Shell.Current.GoToAsync($"/{nameof(NewFestivalPage)}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
-        [RelayCommand]
-        async Task ViewFestival(Festival festival)
+    }
+    [RelayCommand]
+    public async Task Refresh()
+    {
+        if (IsBusy)
+            return;
+        try
         {
-            if (IsBusy)
-                return;
-            try
+            IsBusy = true;
+            MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync());
+            IsRefreshing = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+    [RelayCommand]
+    public async Task NewFestival()
+    {
+        if (IsBusy)
+            return;
+        try
+        {
+            IsBusy = true;
+            await Shell.Current.GoToAsync($"/{nameof(NewFestivalPage)}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+    [RelayCommand]
+    async Task ViewFestival(Festival festival)
+    {
+        if (IsBusy)
+            return;
+        try
+        {
+            IsBusy = true;
+            await Shell.Current.GoToAsync($"/{nameof(FestivalInfoPage)}", true,
+            new Dictionary<string, object>
             {
-                IsBusy = true;
-                await Shell.Current.GoToAsync($"/{nameof(FestivalInfoPage)}", true,
+            { "FestivalId", festival.Id }
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+    [RelayCommand]
+    async Task EditFestival(Festival festival)
+    {
+        if (IsBusy)
+            return;
+        try
+        {
+            IsBusy = true;
+            await Shell.Current.GoToAsync($"/{nameof(EditFestivalPage)}", true,
                 new Dictionary<string, object>
                 {
-                { "FestivalId", festival.Id }
+                    { "FestivalId", festival.Id }
                 });
-            }
-            catch (Exception ex)
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+    [RelayCommand]
+    async Task DeleteFestival(Festival festival)
+    {
+        if (IsBusy)
+            return;
+        try
+        {
+            IsBusy = true;
+            if (await _alertService.ShowConfirmation($"Deleting Festival{festival.Name}", "Are you sure you want to delete this festival?"))
             {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                IsBusy = false;
+                await _databaseService.DeleteFestivalAsync(festival);
+                MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync());
             }
         }
-        [RelayCommand]
-        async Task EditFestival(Festival festival)
+        catch (Exception ex)
         {
-            if (IsBusy)
-                return;
-            try
-            {
-                IsBusy = true;
-                await Shell.Current.GoToAsync($"/{nameof(EditFestivalPage)}", true,
-                    new Dictionary<string, object>
-                    {
-                        { "FestivalId", festival.Id }
-                    });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            Console.WriteLine(ex.Message);
         }
-        [RelayCommand]
-        async Task DeleteFestival(Festival festival)
+        finally
         {
-            if (IsBusy)
-                return;
-            try
-            {
-                IsBusy = true;
-                if (await _alertService.ShowConfirmation($"Deleting Festival{festival.Name}", "Are you sure you want to delete this festival?"))
-                {
-                    await _databaseService.DeleteFestivalAsync(festival);
-                    LoadFestivals();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 }

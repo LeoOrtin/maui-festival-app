@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="FestivalPlannerApp.Views.ProfilePage"
+             xmlns:models="clr-namespace:FestivalPlannerApp.Models"
+             xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
+             x:DataType="viewModels:ProfileViewModel"
+             Shell.TabBarIsVisible="False">
+    <Grid RowDefinitions="30,30,30,100,*"
+          ColumnDefinitions="100,*"
+          Margin="50,100,50,20"
+          ColumnSpacing="30">
+        <Image Grid.RowSpan="3" 
+               Source="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png"/>
+        <Label Grid.Column="1"
+               Text="{Binding CurrentUser.Display_name}"
+               FontSize="Title"
+               HorizontalOptions="Start"
+               VerticalOptions="Center"/>
+        <Label Grid.Column="1"
+               Grid.Row="1"
+               Text="{Binding CurrentUser.Email}"
+               FontSize="Medium"
+               HorizontalOptions="Start"
+               VerticalOptions="Center"/>
+        <Label Grid.Column="1"
+               Grid.Row="2"
+               Text="{Binding CurrentUser.Followers.Total, StringFormat='Followers: {0}'}"
+               FontSize="Medium"
+               HorizontalOptions="Start"
+               VerticalOptions="Center"/>
+        <Button Grid.Row="3"
+                Grid.ColumnSpan="2" 
+                HorizontalOptions="Fill"
+                FontSize="Large"
+                FontAttributes="Bold"
+                TextColor="Black"
+                Text="Sign Out"
+                HeightRequest="75"
+                BackgroundColor="#1ED760"
+                Command="{Binding SignOutCommand}"/>
+        <Button Grid.Row="4"
+        Grid.ColumnSpan="2" 
+        HorizontalOptions="Fill"
+        FontSize="Large"
+        FontAttributes="Bold"
+        TextColor="Black"
+        Text="Test"
+        HeightRequest="75"
+        BackgroundColor="Aqua"
+        Command="{Binding TestCommand}"/>
+    </Grid>
+</ContentPage>

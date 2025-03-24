@@ -30,7 +30,7 @@
                         <Border Opacity="1"
                                 BackgroundColor="Beige">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:EditConcertViewModel}}, Path=ArtistSelectionCommand}"
+                                <TapGestureRecognizer Command="{Binding ArtistSelectionCommand, x:DataType=viewModels:EditConcertViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditConcertViewModel}}}"
                                                       CommandParameter="{Binding .}"/>
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout>
@@ -50,7 +50,7 @@
                 Grid.ColumnSpan="2"
                 Title="Select stage"
                 ItemsSource="{Binding Stages}"
-                ItemDisplayBinding="{Binding Name}"
+                ItemDisplayBinding="{Binding Name, x:DataType=models:Stage}"
                 SelectedItem="{Binding SelectedStage}"
                 HorizontalOptions="Fill"
                 HorizontalTextAlignment="Center"
@@ -74,7 +74,7 @@
             <Picker x:Name="StartPicker" 
                     Title="Select start time"
                     ItemsSource="{Binding StartTimeSlots}"
-                    ItemDisplayBinding="{Binding ., StringFormat='{0:hh\\:mm}'}"
+                    ItemDisplayBinding="{Binding ., x:DataType=x:TimeSpan, StringFormat='{0:hh\\:mm}'}"
                     SelectedItem="{Binding SelectedStartTime}">
                 <Picker.Behaviors>
                     <toolkit:EventToCommandBehavior 
@@ -90,7 +90,7 @@
             <Picker x:Name="EndPicker" 
                     Title="Select end time"
                     ItemsSource="{Binding EndTimeSlots}"
-                    ItemDisplayBinding="{Binding ., StringFormat='{0:hh\\:mm}'}"
+                    ItemDisplayBinding="{Binding ., x:DataType=x:TimeSpan, StringFormat='{0:hh\\:mm}'}"
                     SelectedItem="{Binding SelectedEndTime}">
                 <Picker.Behaviors>
                     <toolkit:EventToCommandBehavior 

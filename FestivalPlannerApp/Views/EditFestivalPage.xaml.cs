@@ -9,4 +9,9 @@ public partial class EditFestivalPage : ContentPage
 		InitializeComponent();
         BindingContext = vm;
     }
+    protected override bool OnBackButtonPressed()
+    {
+        (BindingContext as EditFestivalViewModel)?.BackButtonCommand.Execute(null);
+        return true;
+    }
 }

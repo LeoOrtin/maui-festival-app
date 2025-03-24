@@ -31,7 +31,7 @@
                         VerticalOptions="Center"
                         WidthRequest="30"
                         HeightRequest="30">
-                    <Label Text="{Binding Source={x:Reference StagesStepper}, Path=Value}"
+                    <Label Text="{Binding x:DataType=Stepper, Source={x:Reference StagesStepper}, Path=Value}"
                            FontSize="Micro"
                            FontAttributes="Bold"
                            TextColor="Black"

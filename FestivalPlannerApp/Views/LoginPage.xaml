@@ -8,15 +8,15 @@
              xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
              x:DataType="viewModels:LoginViewModel"
              Title="LoginPage"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior 
             EventName="Appearing"
             BindingContext="{Binding Path=BindingContext, Source={x:Reference LoginContentPage}, x:DataType=ContentPage}"
             Command="{Binding AppearingCommand}"/>
     </ContentPage.Behaviors>
-    <Grid RowDefinitions="*,100,100,50,50,*" 
-          >
+    <Grid RowDefinitions="*,100,100,50,50,*">
         <Label Text="Welcome to Festival Planner!"
                FontSize="Large"
                HorizontalOptions="Center"
@@ -39,6 +39,5 @@
                 HeightRequest="5"
                 Margin="10"
                 BackgroundColor="#1ED760"/>
-
     </Grid>
 </ContentPage>

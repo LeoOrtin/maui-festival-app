@@ -9,4 +9,9 @@ public partial class FestivalInfoPage : ContentPage
 		InitializeComponent();
         BindingContext = vm;
     }
+    protected override bool OnBackButtonPressed()
+    {
+        (BindingContext as FestivalInfoViewModel)?.BackButtonCommand.Execute(null);
+        return true;
+    }
 }

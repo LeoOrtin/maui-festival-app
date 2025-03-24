@@ -2,9 +2,9 @@ using FestivalPlannerApp.ViewModels;
 
 namespace FestivalPlannerApp.Views;
 
-public partial class HomePage : ContentPage
+public partial class ProfilePage : ContentPage
 {
-    public HomePage(HomeViewModel vm)
+    public ProfilePage(ProfileViewModel vm)
 	{
 		InitializeComponent();
         BindingContext = vm;

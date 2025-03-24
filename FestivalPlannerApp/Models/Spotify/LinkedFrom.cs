@@ -1,6 +1,5 @@
-﻿namespace FestivalPlannerApp.Models
+﻿namespace FestivalPlannerApp.Models;
+
+public class LinkedFrom
 {
-    public class LinkedFrom
-    {
-    }
 }

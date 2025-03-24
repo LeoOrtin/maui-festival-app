@@ -6,20 +6,15 @@
     xmlns:views="clr-namespace:FestivalPlannerApp.Views"
     Shell.FlyoutBehavior="Flyout"
     Title="FestivalPlannerApp">
-
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate views:LoginPage}"
-        Route="MainPage"
-        FlyoutItemIsVisible="False"/>
-
-    <FlyoutItem Route="HomePage" FlyoutDisplayOptions="AsMultipleItems">
-        <ShellContent Title="Home"
-                      Icon="home.png"
-                      ContentTemplate="{DataTemplate views:HomePage}"/>
-        <ShellContent Title="My Festivals" 
+    <ShellContent Route="LoginPage"
+                  Title="Login"
+                  ContentTemplate="{DataTemplate views:LoginPage}"
+                  FlyoutItemIsVisible="False"/>
+    <FlyoutItem Route="MyFestivalsPage" 
+                FlyoutDisplayOptions="AsMultipleItems">
+        <ShellContent Title="My Festivals"
                       ContentTemplate="{DataTemplate views:MyFestivalsPage}"/>
+        <ShellContent Title="Profile"
+                      ContentTemplate="{DataTemplate views:ProfilePage}"/>
     </FlyoutItem>
-
-
 </Shell>

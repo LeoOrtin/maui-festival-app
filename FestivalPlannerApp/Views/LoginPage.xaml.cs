@@ -5,11 +5,9 @@ namespace FestivalPlannerApp.Views;
 
 public partial class LoginPage : ContentPage
 {
-    private readonly ISpotifyService _spotifyService;
-    public LoginPage(LoginViewModel vm, ISpotifyService spotifyService)
+    public LoginPage(LoginViewModel vm)
 	{
 		InitializeComponent();
         BindingContext = vm;
-        _spotifyService = spotifyService;
     }
 }
