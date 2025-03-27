@@ -44,26 +44,6 @@ public partial class MyFestivalsViewModel : BaseViewModel
         }
     }
     [RelayCommand]
-    public async Task Refresh()
-    {
-        if (IsBusy)
-            return;
-        try
-        {
-            IsBusy = true;
-            MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync(user.Id));
-            IsRefreshing = false;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-    [RelayCommand]
     public async Task NewFestival()
     {
         if (IsBusy)
