@@ -88,7 +88,7 @@ public class SpotifyService : ISpotifyService
     }
     public async Task<User> GetUser()
     {
-        User? user = new();
+        var user = new User();
         Uri uri = new($"https://api.spotify.com/v1/me");
         HttpRequestMessage request = new(HttpMethod.Get, uri);
         string accessToken = Preferences.Get("access_token", string.Empty);
@@ -114,7 +114,37 @@ public class SpotifyService : ISpotifyService
         {
             Debug.WriteLine($"\tERROR {0}", ex.Message);
         }
-        return user ?? new User();
+        return user ?? new();
+    }
+    public async Task<Artist> GetArtist(string id)
+    {
+        var artist = new Artist();
+        Uri uri = new($"https://api.spotify.com/v1/artists/{id}");
+        HttpRequestMessage request = new(HttpMethod.Get, uri);
+        string accessToken = Preferences.Get("access_token", string.Empty);
+        request.Headers.Add("Authorization", "Bearer " + accessToken);
+        try
+        {
+            HttpResponseMessage response = await _client.SendAsync(request);
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                await RefreshToken();
+                accessToken = Preferences.Get("access_token", string.Empty);
+                HttpRequestMessage newRequest = new(HttpMethod.Get, uri);
+                newRequest.Headers.Add("Authorization", "Bearer " + accessToken);
+                response = await _client.SendAsync(newRequest);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                artist = JsonSerializer.Deserialize<Artist>(content, _serializerOptions);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"\tERROR {0}", ex.Message);
+        }
+        return artist ?? new();
     }
     public async Task<List<Artist>> SearchArtists(string query)
     {
@@ -151,11 +181,11 @@ public class SpotifyService : ISpotifyService
         }
         return result?.Items ?? [];
     }
-    public async Task<List<Artist>> GetTopArtists(string frame, int limit)
+    public async Task<List<Artist>> GetTopArtists()
     {
         ArtistsResult? result = new();
         List<Artist>? topArtists = [null];
-        Uri uri = new($"https://api.spotify.com/v1/me/top/artists?time_range={frame}&limit={limit}");
+        Uri uri = new($"https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=50");
         HttpRequestMessage request = new(HttpMethod.Get, uri);
         string accessToken = Preferences.Get("access_token", string.Empty);
         request.Headers.Add("Authorization", "Bearer " + accessToken);
@@ -255,7 +285,7 @@ public class SpotifyService : ISpotifyService
                     result = JsonSerializer.Deserialize<FollowedArtistsResult>(artists.GetRawText(), _serializerOptions) ?? new();
                     followedArtists = new List<Artist>(result.Items);
                 }
-                while(result.Next != null)
+                while (result.Next != null)
                 {
                     uri = new(result.Next);
                     request = new(HttpMethod.Get, uri);
@@ -390,6 +420,7 @@ public class SpotifyService : ISpotifyService
     }
     public async Task<List<Track>> GetRecentlyPlayedTracks(int limit)
     {
+        await Task.Delay(10);
         throw new NotImplementedException();
     }
 

@@ -124,7 +124,9 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
                     };
 
                     var relevantConcerts = Concerts
-                        .Where(c => c.DayId == day.Id && c.StartTime <= time && c.EndTime > time)
+                        .Where(c => c.DayId == day.Id && 
+                        c.StartTime <= time && 
+                        (c.EndTime > time || c.EndTime == TimeSpan.Zero))
                         .ToDictionary(c => c.StageId, c => c.ArtistName);
 
                     item.StageEvents = Stages.ToDictionary(

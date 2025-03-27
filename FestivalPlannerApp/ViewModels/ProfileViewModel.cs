@@ -37,6 +37,6 @@ public partial class ProfileViewModel : BaseViewModel
     [RelayCommand]
     public async Task Test()
     {
-        
+        await Task.Delay(10);
     }
 }
