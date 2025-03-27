@@ -11,14 +11,18 @@ public partial class MyFestivalsViewModel : BaseViewModel
 {
     private readonly IDatabaseService _databaseService;
     private readonly IAlertService _alertService;
+    private readonly ISpotifyService _spotifyService;
+    private User user = new();
     [ObservableProperty]
     public partial bool IsRefreshing { get; set; }
     [ObservableProperty]
     public partial ObservableCollection<Festival>? MyFestivals {  get; set; }
-    public MyFestivalsViewModel(IDatabaseService databaseService, IAlertService alertService)
+    public MyFestivalsViewModel(IDatabaseService databaseService, IAlertService alertService, ISpotifyService spotifyService)
     {
         _databaseService = databaseService;
         _alertService = alertService;
+        _spotifyService = spotifyService;
+        Task.Run(async () => user = await spotifyService.GetUser()).Wait();
     }
     [RelayCommand]
     public async Task NavigatedTo()
@@ -28,27 +32,7 @@ public partial class MyFestivalsViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync());
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-    [RelayCommand]
-    public async Task Refresh()
-    {
-        if (IsBusy)
-            return;
-        try
-        {
-            IsBusy = true;
-            MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync());
-            IsRefreshing = false;
+            MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync(user.Id));
         }
         catch (Exception ex)
         {
@@ -135,7 +119,7 @@ public partial class MyFestivalsViewModel : BaseViewModel
             if (await _alertService.ShowConfirmation($"Deleting Festival{festival.Name}", "Are you sure you want to delete this festival?"))
             {
                 await _databaseService.DeleteFestivalAsync(festival);
-                MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync());
+                MyFestivals = new ObservableCollection<Festival>(await _databaseService.GetFestivalsAsync(user.Id));
             }
         }
         catch (Exception ex)

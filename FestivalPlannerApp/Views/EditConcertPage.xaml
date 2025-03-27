@@ -75,7 +75,7 @@
                     Title="Select start time"
                     ItemsSource="{Binding StartTimeSlots}"
                     ItemDisplayBinding="{Binding ., x:DataType=x:TimeSpan, StringFormat='{0:hh\\:mm}'}"
-                    SelectedItem="{Binding SelectedStartTime}">
+                    SelectedItem="{Binding SelectedStartTime, Mode=TwoWay}">
                 <Picker.Behaviors>
                     <toolkit:EventToCommandBehavior 
                         EventName="SelectedIndexChanged"
@@ -91,7 +91,7 @@
                     Title="Select end time"
                     ItemsSource="{Binding EndTimeSlots}"
                     ItemDisplayBinding="{Binding ., x:DataType=x:TimeSpan, StringFormat='{0:hh\\:mm}'}"
-                    SelectedItem="{Binding SelectedEndTime}">
+                    SelectedItem="{Binding SelectedEndTime, Mode=TwoWay}">
                 <Picker.Behaviors>
                     <toolkit:EventToCommandBehavior 
                         EventName="SelectedIndexChanged"

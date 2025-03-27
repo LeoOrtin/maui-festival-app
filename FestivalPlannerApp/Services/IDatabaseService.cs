@@ -6,7 +6,7 @@ public interface IDatabaseService
 {
     Task AddFestivalAsync(Festival festival);
     Task<Festival> GetFestivalByIdAsync(int festivalId);
-    Task<List<Festival>> GetFestivalsAsync();
+    Task<List<Festival>> GetFestivalsAsync(string userId);
     Task UpdateFestivalAsync(Festival festival);
     Task DeleteFestivalAsync(Festival festival);
     Task AddStageAsync(Stage stage, int festivalId);

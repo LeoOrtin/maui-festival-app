@@ -8,8 +8,9 @@ public interface ISpotifyService
     bool IsSignedIn();
     void SignOut();
     Task<User> GetUser();
+    Task<Artist> GetArtist(string id);
     Task<List<Artist>> SearchArtists(string query);
-    Task<List<Artist>> GetTopArtists(string frame, int limit);
+    Task<List<Artist>> GetTopArtists();
     Task<List<Track>> GetTopTracks(int limit);
     Task<List<Artist>> GetFollowedArtists();
     Task<bool[]> CheckArtistsFollowed(string[] query);

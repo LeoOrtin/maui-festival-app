@@ -186,7 +186,7 @@ public partial class EditConcertViewModel(IDatabaseService databaseService, ISpo
                 SelectedStartTime < c.EndTime && SelectedEndTime > c.StartTime); // Overlapping time range check
             if (hasOverlap)
             {
-                await alertService.ShowAlert("Time Slot Conflict", "The selected time slot overlaps with an existing concert. Please choose another time.");
+                await alertService.ShowAlert("Time Slot Conflict", "The selected time overlaps with an existing concert. Please choose another time or stage.");
                 return;
             }
             if (CurrentConcert.Id == 0)
@@ -197,6 +197,7 @@ public partial class EditConcertViewModel(IDatabaseService databaseService, ISpo
                     {
                         FestivalId = FestivalId,
                         StageId = SelectedStage.Id,
+                        StageName = SelectedStage.Name,
                         DayId = SelectedDay.Id,
                         ArtistId = artistId,
                         ArtistName = SearchText,
@@ -209,6 +210,7 @@ public partial class EditConcertViewModel(IDatabaseService databaseService, ISpo
                 // Update existing concert
                 CurrentConcert.FestivalId = FestivalId;
                 CurrentConcert.StageId = SelectedStage.Id;
+                CurrentConcert.StageName = SelectedStage.Name;
                 CurrentConcert.DayId = SelectedDay.Id;
                 CurrentConcert.ArtistName = SearchText;
                 CurrentConcert.StartTime = SelectedStartTime;

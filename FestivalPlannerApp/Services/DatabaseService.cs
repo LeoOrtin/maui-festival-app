@@ -25,7 +25,6 @@ public class DatabaseService : IDatabaseService
             await connection.CreateTableAsync<Concert>();
             await connection.CreateTableAsync<Stage>();
             await connection.CreateTableAsync<Day>();
-            // Add other tables as needed
         }
         catch (Exception ex)
         {
@@ -40,9 +39,9 @@ public class DatabaseService : IDatabaseService
     {
         return await connection.Table<Festival>().Where(i => i.Id == festivalId).FirstOrDefaultAsync();
     }
-    public async Task<List<Festival>> GetFestivalsAsync()
+    public async Task<List<Festival>> GetFestivalsAsync(string userId)
     {
-        return await connection.Table<Festival>().ToListAsync();
+        return await connection.Table<Festival>().Where(i => i.UserId == userId).ToListAsync();
     }
     public async Task UpdateFestivalAsync(Festival festival)
     {
