@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using FestivalPlannerApp.Models;
 using FestivalPlannerApp.Services;
 using FestivalPlannerApp.Views;
+using System;
 using System.Collections.ObjectModel;
 
 namespace FestivalPlannerApp.ViewModels;
@@ -15,7 +16,7 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
     [ObservableProperty]
     public partial Festival Festival { get; set; } = new();
     [ObservableProperty]
-    public partial ObservableCollection<Day> Days { get; set; }
+    public partial ObservableCollection<Day> Days { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<Stage> Stages { get; set; }
     [ObservableProperty]
@@ -31,11 +32,13 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
         try
         {
             IsBusy = true;
+
             Festival = await databaseService.GetFestivalByIdAsync(FestivalId);
-            var daysFromDb = await databaseService.GetDaysAsync(FestivalId);
-            Days = new ObservableCollection<Day>(daysFromDb);
+            var days = await databaseService.GetDaysAsync(FestivalId);
+            Days = new ObservableCollection<Day>(days);
             Stages = new ObservableCollection<Stage>(await databaseService.GetStagesAsync(FestivalId));
             Concerts = new ObservableCollection<Concert>(await databaseService.GetConcertsAsync(FestivalId));
+
             GenerateSchedule();
         }
         catch (Exception ex)
@@ -77,17 +80,44 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
             IsBusy = false;
         }
     }
+
+    //[RelayCommand]
+    //private async Task LoadMoreItems()
+    //{
+    //    if(IsBusy)
+    //        return;
+    //    try
+    //    {
+    //        IsBusy = true;
+    //        var moreDays = await databaseService.GetDaysAsync(FestivalId); // Load 5 at a time
+    //        foreach (var day in moreDays)
+    //        {
+    //            Days.Add(day);
+    //        }
+    //        GenerateSchedule();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Console.WriteLine(ex.Message);
+    //    }
+    //    finally
+    //    {
+    //        IsBusy = false;
+    //    }
+    //}
     private void GenerateSchedule()
     {
         try
         {
             Schedule.Clear();
+
             foreach (var day in Days)
             {
+                var dayItems = new List<ScheduleItem>();
                 foreach (var time in day.TimeSlots)
                 {
-                    var item = new ScheduleItem 
-                    { 
+                    var item = new ScheduleItem
+                    {
                         Date = day.StartDateTime,
                         StartTime = time,
                         EndTime = time.Add(TimeSpan.FromHours(1))
@@ -96,10 +126,12 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
                     var relevantConcerts = Concerts
                         .Where(c => c.DayId == day.Id && c.StartTime <= time && c.EndTime > time)
                         .ToDictionary(c => c.StageId, c => c.ArtistName);
-                    
-                    item.StageEvents = Stages.ToDictionary(s => s.Id,
-                        s => relevantConcerts.TryGetValue(s.Id, out var artist) ? artist : "");
 
+                    item.StageEvents = Stages.ToDictionary(
+                        s => s.Id,
+                        s => relevantConcerts.TryGetValue(s.Id, out var artist) ? artist : string.Empty);
+
+                    dayItems.Add(item);
                     Schedule.Add(item);
                 }
                 // Notify all days that Schedule is updated

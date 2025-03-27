@@ -21,8 +21,45 @@ public partial class Day : ObservableObject
     public DateTime MaxStartDateTime { get; set; } = DateTime.MaxValue;
 
     private EditFestivalViewModel? _viewModel;
-    public Day() { }
+    private ObservableCollection<TimeSpan>? _timeSlots;
+    public ObservableCollection<TimeSpan> TimeSlots
+    {
+        get
+        {
+            if (_timeSlots == null)
+            {
+                var times = new ObservableCollection<TimeSpan>();
+                var current = StartDateTime.TimeOfDay;
+                var end = AfterMidnight ? TimeSpan.FromHours(24) : EndDateTime.TimeOfDay;
 
+                while (current <= end)
+                {
+                    times.Add(current);
+                    current = current.Add(TimeSpan.FromMinutes(30));
+                    if (end == TimeSpan.FromHours(24) && current == TimeSpan.FromHours(24))
+                    {
+                        current = TimeSpan.Zero;
+                        end = EndDateTime.TimeOfDay;
+                    }
+                }
+                _timeSlots = times;
+            }
+            return _timeSlots;
+        }
+    }
+
+    public IEnumerable<ScheduleItem> FilteredSchedule
+    {
+        get
+        {
+            if (_viewModel == null)
+                return Enumerable.Empty<ScheduleItem>();
+
+            return _viewModel?.Schedule?
+                .Where(s => s.Date.Date == StartDateTime.Date)
+                ?? Enumerable.Empty<ScheduleItem>();
+        }
+    }
     // Inject ViewModel after SQLite loads the object
     public void InjectViewModel(EditFestivalViewModel viewModel)
     {
@@ -41,35 +78,5 @@ public partial class Day : ObservableObject
         {
             OnPropertyChanged(nameof(FilteredSchedule)); // Notify UI of changes
         }
-    }
-
-    public ObservableCollection<TimeSpan> TimeSlots
-    {
-        get
-        {
-            var times = new ObservableCollection<TimeSpan>();
-            var current = StartDateTime.TimeOfDay;
-            var end = AfterMidnight ? TimeSpan.FromHours(24) : EndDateTime.TimeOfDay;
-
-            while (current <= end)
-            {
-                times.Add(current);
-                current = current.Add(TimeSpan.FromHours(1));
-                if (end == TimeSpan.FromHours(24) && current == TimeSpan.FromHours(24))
-                {
-                    current = TimeSpan.Zero;
-                    end = EndDateTime.TimeOfDay;
-                }
-            }
-
-            return times;
-        }
-    }
-
-    public IEnumerable<ScheduleItem> FilteredSchedule
-    {
-        get => _viewModel?.Schedule?
-            .Where(s => s.Date.Date == StartDateTime.Date) 
-            ?? Enumerable.Empty<ScheduleItem>();
     }
 }

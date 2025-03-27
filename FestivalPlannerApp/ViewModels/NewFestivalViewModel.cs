@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace FestivalPlannerApp.ViewModels;
 
-public partial class NewFestivalViewModel(IAlertService alertService, IDatabaseService databaseService) : BaseViewModel
+public partial class NewFestivalViewModel(IAlertService alertService, IDatabaseService databaseService, ISpotifyService spotifyService) : BaseViewModel
 {
     [ObservableProperty]
     public partial int StagesStepperValue { get; set; }
@@ -131,10 +131,12 @@ public partial class NewFestivalViewModel(IAlertService alertService, IDatabaseS
                 if (string.IsNullOrEmpty(NewFestival.Name) || Days.Count == 0 || string.IsNullOrEmpty(stage.Name))
                 {
                     await alertService.ShowAlert("Please enter all mandatory fields",
-                        "Enter festival name and add al leats one day");
+                        "Enter festival name and add at least one day");
                     return;
                 }
             }
+            var user = await spotifyService.GetUser();
+            NewFestival.UserId = user.Id;
             await databaseService.AddFestivalAsync(NewFestival);
 
             foreach (var stage in Stages)

@@ -10,12 +10,15 @@ public partial class ProfileViewModel : BaseViewModel
 {
     private readonly ISpotifyService _spotifyService;
     private readonly IAlertService _alertService;
+    private readonly IDatabaseService _databaseService;
     [ObservableProperty]
     public partial User? CurrentUser { get; set; }
-    public ProfileViewModel(ISpotifyService spotifyService, IAlertService alertService) 
+    public ProfileViewModel(ISpotifyService spotifyService, IAlertService alertService, IDatabaseService databaseService) 
     {
         _spotifyService = spotifyService;
         _alertService = alertService;
+        _databaseService = databaseService;
+        
         LoadUser();
     }
     public async void LoadUser()
@@ -34,11 +37,6 @@ public partial class ProfileViewModel : BaseViewModel
     [RelayCommand]
     public async Task Test()
     {
-        var artistsMedium = await _spotifyService.GetTopArtists("medium_term", 50);
-        var artistsLong = await _spotifyService.GetTopArtists("long_term", 50);
-        for(int i = 0;  i < artistsMedium.Count; i++)
-        {
-            Console.WriteLine($"({i+1}) {artistsMedium[i].Name} // {artistsLong[i].Name}");
-        }
+        
     }
 }
