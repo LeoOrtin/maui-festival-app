@@ -20,7 +20,6 @@ public partial class Day : ObservableObject
     public DateTime MinStartDateTime { get; set; } = DateTime.Today;
     public DateTime MaxStartDateTime { get; set; } = DateTime.MaxValue;
 
-    //private EditFestivalViewModel? _viewModel;
     private ObservableCollection<TimeSpan>? _timeSlots;
     public ObservableCollection<TimeSpan> TimeSlots
     {
@@ -47,36 +46,4 @@ public partial class Day : ObservableObject
             return _timeSlots;
         }
     }
-
-    //public IEnumerable<ScheduleItem> FilteredSchedule
-    //{
-    //    get
-    //    {
-    //        if (_viewModel == null)
-    //            return Enumerable.Empty<ScheduleItem>();
-
-    //        return _viewModel?.Schedule?
-    //            .Where(s => s.Date.Date == StartDateTime.Date)
-    //            ?? Enumerable.Empty<ScheduleItem>();
-    //    }
-    //}
-    //// Inject ViewModel after SQLite loads the object
-    //public void InjectViewModel(EditFestivalViewModel viewModel)
-    //{
-    //    if (_viewModel != null)
-    //    {
-    //        _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
-    //    }
-
-    //    _viewModel = viewModel;
-    //    _viewModel.PropertyChanged += ViewModel_PropertyChanged;
-    //}
-
-    //private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    //{
-    //    if (e.PropertyName == nameof(_viewModel.Schedule))
-    //    {
-    //        OnPropertyChanged(nameof(FilteredSchedule)); // Notify UI of changes
-    //    }
-    //}
 }
