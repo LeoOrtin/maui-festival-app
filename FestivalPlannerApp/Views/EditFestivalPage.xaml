@@ -8,7 +8,7 @@
              xmlns:models="clr-namespace:FestivalPlannerApp.Models"
              xmlns:viewModels="clr-namespace:FestivalPlannerApp.ViewModels"
              x:DataType="viewModels:EditFestivalViewModel"
-             Title="EditFestivalPage"
+             Title="{Binding Festival.Name, StringFormat='{0} Line Up'}"
              Shell.TabBarIsVisible="False">
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding BackButtonCommand}"/>
@@ -19,83 +19,101 @@
             BindingContext="{Binding Path=BindingContext, Source={x:Reference EditFestivalContentPage}, x:DataType=ContentPage}"
             Command="{Binding NavigatedToCommand}"/>
     </ContentPage.Behaviors>
-    <ScrollView Orientation="Both">
-        <VerticalStackLayout>
-            <CollectionView ItemsSource="{Binding Days}"
-                            IsVisible="{Binding IsNotBusy}"
-                            ItemSizingStrategy="MeasureFirstItem"
-                            ItemsUpdatingScrollMode="KeepItemsInView">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Day">
-                        <VerticalStackLayout Padding="10"
-                                                Spacing="10">
-                            <Label Text="{Binding StartDateTime, StringFormat='{0:ddd, dd MMM yyyy}'}"
-                                    FontSize="Large"
-                                    FontAttributes="Bold"/>
-                            <Grid ColumnDefinitions="Auto"
-                                    RowDefinitions="Auto,*">
-                                <Grid ColumnDefinitions="42,*"
-                                        Margin="0,0,0,10">
-                                    <CollectionView Grid.Column="1"
-                                                    ItemsSource="{Binding Stages, x:DataType=viewModels:EditFestivalViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}}"
-                                                    ItemsLayout="HorizontalList"
-                                                    ItemSizingStrategy="MeasureFirstItem"
-                                                    ItemsUpdatingScrollMode="KeepItemsInView">
-                                        <CollectionView.ItemTemplate>
-                                            <DataTemplate x:DataType="models:Stage">
-                                                <Border WidthRequest="100"
-                                                        HeightRequest="30"
-                                                        Background="LightGray">
-                                                    <Label Text="{Binding Name}"
-                                                            FontAttributes="Bold"
-                                                            VerticalOptions="Center"
-                                                            HorizontalOptions="Center"/>
-                                                </Border>
-                                            </DataTemplate>
-                                        </CollectionView.ItemTemplate>
-                                    </CollectionView>
-                                </Grid>
-                                <CollectionView Grid.Row="1" 
-                                                ItemsSource="{Binding FilteredSchedule}"
-                                                ItemSizingStrategy="MeasureFirstItem"
-                                                ItemsUpdatingScrollMode="KeepItemsInView">
+    <Grid RowDefinitions="100,20,*"
+          ColumnDefinitions="160,*">
+        <!--Days-->
+        <CollectionView x:Name="DaysCollectionView"
+                        ItemsSource="{Binding Days}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedDay, Mode=TwoWay}"
+                        Margin="10,0,0,0">
+            <CollectionView.Behaviors>
+                <toolkit:EventToCommandBehavior 
+                    EventName="SelectionChanged"
+                    BindingContext="{Binding Path=BindingContext, Source={x:Reference DaysCollectionView}, x:DataType=CollectionView}"
+                    Command="{Binding DaySelectionCommand}"/>
+            </CollectionView.Behaviors>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Day">
+                    <Label Text="{Binding StartDateTime, StringFormat='{0:ddd, dd MMM yyyy}'}"
+                           FontSize="Medium"
+                           FontAttributes="Bold"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Button Grid.Column="1"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                Text="Recommendations"
+                Margin="0,0,10,0"
+                Command="{Binding ViewRecommendationsCommand}"/>
+        <Label Grid.Row="1"
+               Grid.ColumnSpan="2"
+               Text="Tap to add concerts"
+               FontSize="Caption"
+               HorizontalOptions="Center"/>
+        <ScrollView Grid.Row="2"
+                    Grid.ColumnSpan="2">
+            <Grid RowDefinitions="30,*"
+                  ColumnDefinitions="50,*">
+                <ActivityIndicator Grid.RowSpan="2"
+                                   Grid.ColumnSpan="2"
+                                   IsVisible="{Binding IsBusy}"
+                                   IsRunning="{Binding IsBusy}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                <!--Time Slots-->
+                <CollectionView Grid.Row="1"
+                                IsVisible="{Binding IsNotBusy}"
+                                ItemsSource="{Binding SelectedDay.TimeSlots}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x:TimeSpan">
+                            <Label Text="{Binding ., StringFormat='{0:hh\\:mm}'}"
+                                   WidthRequest="50"
+                                   HeightRequest="20"/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <!--Stages-->
+                <CollectionView Grid.RowSpan="2"
+                                Grid.Column="1"
+                                IsVisible="{Binding IsNotBusy}"
+                                ItemsSource="{Binding Schedule}"
+                                ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:StageSchedule">
+                            <Grid RowDefinitions="30,*">
+                                <Border WidthRequest="100"
+                                        HeightRequest="30"
+                                        Background="LightGray">
+                                    <Label Text="{Binding Stage.Name}"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"/>
+                                </Border>
+                                <!--Concerts-->
+                                <CollectionView Grid.Row="1"
+                                                ItemsSource="{Binding ArtistTimeSlots}">
                                     <CollectionView.ItemTemplate>
-                                        <DataTemplate x:DataType="models:ScheduleItem">
-                                            <HorizontalStackLayout>
-                                                <Label Text="{Binding StartTime, StringFormat='{0:hh\\:mm}'}"
-                                                        FontSize="13"/>
-                                                <CollectionView ItemsSource="{Binding StageEvents.Values}"
-                                                                ItemsLayout="HorizontalList"
-                                                                Margin="10,0,0,0">
-                                                    <CollectionView.ItemTemplate>
-                                                        <DataTemplate x:DataType="x:String">
-                                                            <Border WidthRequest="100"
-                                                                    HeightRequest="20">
-                                                                <Border.GestureRecognizers>
-                                                                    <TapGestureRecognizer Command="{Binding EditConcertCommand, x:DataType=viewModels:EditFestivalViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}}"
-                                                                                            CommandParameter="{Binding .}"/>
-                                                                </Border.GestureRecognizers>
-                                                                <Label Text="{Binding .}"
-                                                                        HorizontalOptions="Center"
-                                                                        VerticalOptions="Center"/>
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </CollectionView.ItemTemplate>
-                                                </CollectionView>
-                                            </HorizontalStackLayout>
+                                        <DataTemplate x:DataType="models:ArtistTimeSlot">
+                                            <Border WidthRequest="100"
+                                                    HeightRequest="20">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding EditConcertCommand, x:DataType=viewModels:EditFestivalViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditFestivalViewModel}}}"
+                                                                          CommandParameter="{Binding .}"/>
+                                                </Border.GestureRecognizers>
+                                                <Label Text="{Binding ArtistName}"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"/>
+                                            </Border>
                                         </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
                             </Grid>
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            <ActivityIndicator IsVisible="{Binding IsBusy}"
-                                IsRunning="{Binding IsBusy}"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"
-                                />
-        </VerticalStackLayout>
-    </ScrollView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </ScrollView>
+    </Grid>
 </ContentPage>

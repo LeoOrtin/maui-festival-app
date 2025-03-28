@@ -16,13 +16,14 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
     [ObservableProperty]
     public partial Festival Festival { get; set; } = new();
     [ObservableProperty]
-    public partial ObservableCollection<Day> Days { get; set; } = new();
+    public partial ObservableCollection<Day> Days { get; set; } = new ObservableCollection<Day>();
     [ObservableProperty]
-    public partial ObservableCollection<Stage> Stages { get; set; }
+    public partial ObservableCollection<StageSchedule> Schedule { get; set; } = new ObservableCollection<StageSchedule>();
     [ObservableProperty]
-    public partial ObservableCollection<Concert> Concerts { get; set; }
-    [ObservableProperty]
-    public partial ObservableCollection<ScheduleItem> Schedule { get; set; } = new ObservableCollection<ScheduleItem>();
+    public partial Day SelectedDay { get; set; }
+
+    private ObservableCollection<Stage> stages = new();
+    private ObservableCollection<Concert> concerts = new();
 
     [RelayCommand]
     public async Task NavigatedTo()
@@ -34,12 +35,42 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
             IsBusy = true;
 
             Festival = await databaseService.GetFestivalByIdAsync(FestivalId);
-            var days = await databaseService.GetDaysAsync(FestivalId);
-            Days = new ObservableCollection<Day>(days);
-            Stages = new ObservableCollection<Stage>(await databaseService.GetStagesAsync(FestivalId));
-            Concerts = new ObservableCollection<Concert>(await databaseService.GetConcertsAsync(FestivalId));
+            Days = new ObservableCollection<Day>(await databaseService.GetDaysAsync(FestivalId));
+            stages = new ObservableCollection<Stage>(await databaseService.GetStagesAsync(FestivalId));
+            concerts = new ObservableCollection<Concert>(await databaseService.GetConcertsAsync(FestivalId));
 
-            GenerateSchedule();
+            SelectedDay = Days[0];
+
+            Schedule.Clear();
+            foreach (var stage in stages)
+            {
+                Schedule.Add(new StageSchedule(stage, SelectedDay, concerts));
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+    [RelayCommand]
+    public async Task DaySelection()
+    {
+        if (IsBusy)
+            return;
+        try
+        {
+            IsBusy = true;
+            await Task.Delay(10);
+
+            Schedule.Clear();
+            foreach (var stage in stages)
+            {
+                Schedule.Add(new StageSchedule(stage, SelectedDay, concerts));
+            }
         }
         catch (Exception ex)
         {
@@ -56,20 +87,18 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
         await Shell.Current.GoToAsync($"//{nameof(MyFestivalsPage)}");
     }
     [RelayCommand]
-    public async Task EditConcert(string concertName)
+    public async Task ViewRecommendations()
     {
         if (IsBusy)
             return;
         try
         {
             IsBusy = true;
-
-            await Shell.Current.GoToAsync($"/{nameof(EditConcertPage)}", true,
-                new Dictionary<string, object>
-                {
-                    { "ConcertName", concertName },
-                    { "FestivalId", FestivalId }
-                });
+            await Shell.Current.GoToAsync($"/{nameof(FestivalInfoPage)}", true,
+            new Dictionary<string, object>
+            {
+            { "FestivalId", FestivalId }
+            });
         }
         catch (Exception ex)
         {
@@ -80,69 +109,29 @@ public partial class EditFestivalViewModel(IDatabaseService databaseService) : B
             IsBusy = false;
         }
     }
-
-    //[RelayCommand]
-    //private async Task LoadMoreItems()
-    //{
-    //    if(IsBusy)
-    //        return;
-    //    try
-    //    {
-    //        IsBusy = true;
-    //        var moreDays = await databaseService.GetDaysAsync(FestivalId); // Load 5 at a time
-    //        foreach (var day in moreDays)
-    //        {
-    //            Days.Add(day);
-    //        }
-    //        GenerateSchedule();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine(ex.Message);
-    //    }
-    //    finally
-    //    {
-    //        IsBusy = false;
-    //    }
-    //}
-    private void GenerateSchedule()
+    [RelayCommand]
+    public async Task EditConcert(ArtistTimeSlot concert)
     {
+        if (IsBusy)
+            return;
         try
         {
-            Schedule.Clear();
+            IsBusy = true;
 
-            foreach (var day in Days)
-            {
-                var dayItems = new List<ScheduleItem>();
-                foreach (var time in day.TimeSlots)
+            await Shell.Current.GoToAsync($"/{nameof(EditConcertPage)}", true,
+                new Dictionary<string, object>
                 {
-                    var item = new ScheduleItem
-                    {
-                        Date = day.StartDateTime,
-                        StartTime = time,
-                        EndTime = time.Add(TimeSpan.FromHours(1))
-                    };
-
-                    var relevantConcerts = Concerts
-                        .Where(c => c.DayId == day.Id && 
-                        c.StartTime <= time && 
-                        (c.EndTime > time || c.EndTime == TimeSpan.Zero))
-                        .ToDictionary(c => c.StageId, c => c.ArtistName);
-
-                    item.StageEvents = Stages.ToDictionary(
-                        s => s.Id,
-                        s => relevantConcerts.TryGetValue(s.Id, out var artist) ? artist : string.Empty);
-
-                    dayItems.Add(item);
-                    Schedule.Add(item);
-                }
-                // Notify all days that Schedule is updated
-                day.InjectViewModel(this);
-            }
+                    { "ConcertName", concert.ArtistName },
+                    { "FestivalId", FestivalId }
+                });
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 }
