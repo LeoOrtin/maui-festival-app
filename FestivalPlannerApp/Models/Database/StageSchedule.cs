@@ -2,14 +2,12 @@
 using System.Collections.ObjectModel;
 
 namespace FestivalPlannerApp.Models;
-public record TimeSlot(TimeSpan Time, string ArtistName);
+public record ArtistTimeSlot(TimeSpan Time, string ArtistName);
 public class StageSchedule
 {
     public Stage Stage { get; }
     public Day Day { get; }
-    //public Dictionary<TimeSpan, string?> TimeSlots { get; } = new();
-    public ObservableCollection<TimeSlot> TimeSlots { get; } = new();   
-
+    public ObservableCollection<ArtistTimeSlot> ArtistTimeSlots { get; } = new();   
     public StageSchedule(Stage stage, Day day, IEnumerable<Concert> concerts)
     {
         Stage = stage;
@@ -25,9 +23,9 @@ public class StageSchedule
                 c.StageId == stage.Id &&
                 c.DayId == day.Id &&
                 c.StartTime <= current &&
-                c.EndTime > current);
+                (c.EndTime > current || c.EndTime == TimeSpan.Zero));
 
-            TimeSlots.Add(new TimeSlot(current, concert?.ArtistName ?? string.Empty));
+            ArtistTimeSlots.Add(new ArtistTimeSlot(current, concert?.ArtistName ?? string.Empty));
 
             current = current.Add(TimeSpan.FromMinutes(30));
             if (end == TimeSpan.FromHours(24) && current == TimeSpan.FromHours(24))

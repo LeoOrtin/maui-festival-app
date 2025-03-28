@@ -42,6 +42,10 @@ public partial class EditConcertViewModel(IDatabaseService databaseService, ISpo
     public partial Festival CurrentFestival { get; set; }
     [ObservableProperty]
     public partial Concert CurrentConcert { get; set; } = new();
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SearchIsNotVisible))]
+    public partial bool SearchIsVisible { get; set; }
+    public bool SearchIsNotVisible => !SearchIsVisible;
     [RelayCommand]
     public async Task NavigatedTo()
     {
@@ -50,6 +54,7 @@ public partial class EditConcertViewModel(IDatabaseService databaseService, ISpo
         try
         {
             IsBusy = true;
+            SearchIsVisible = false;
             CurrentFestival = await databaseService.GetFestivalByIdAsync(FestivalId);
             Stages = new ObservableCollection<Stage>(await databaseService.GetStagesAsync(FestivalId));
             days = await databaseService.GetDaysAsync(FestivalId);
@@ -95,10 +100,12 @@ public partial class EditConcertViewModel(IDatabaseService databaseService, ISpo
         try
         {
             ArtistsResult.Clear();
-            if (SearchText != CurrentConcert.ArtistName)
+            SearchIsVisible = false;
+            if (SearchText != CurrentConcert.ArtistName && SearchText != "")
             {
                 var result = new ObservableCollection<Artist>(await spotifyService.SearchArtists(SearchText ?? string.Empty));
                 ArtistsResult = result;
+                SearchIsVisible = true;
             }
         }
         catch (Exception ex)
@@ -113,6 +120,7 @@ public partial class EditConcertViewModel(IDatabaseService databaseService, ISpo
         artistId = selectedArtist.Id;
         _searchTimer?.Stop();
         ArtistsResult.Clear();
+        SearchIsVisible = false;
     }
     [RelayCommand]
     public void DateSelection()

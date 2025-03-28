@@ -15,39 +15,42 @@
             BindingContext="{Binding Path=BindingContext, Source={x:Reference EditConcertContentPage}, x:DataType=ContentPage}"
             Command="{Binding NavigatedToCommand}"/>
     </ContentPage.Behaviors>
-    <Grid RowDefinitions="Auto,150,100,100,*"
+    <Grid RowDefinitions="50,150,100,100,*"
           ColumnDefinitions="*,*"
           Padding="20"
           RowSpacing="0">
-        <VerticalStackLayout Grid.ColumnSpan="2">
-            <SearchBar x:Name="ArtistsSearchBar"
-                        Placeholder="Search for an artist"
-                        Text="{Binding SearchText, Mode=TwoWay}">
-            </SearchBar>
-            <CollectionView ItemsSource="{Binding ArtistsResult}">
+        <SearchBar Grid.ColumnSpan="2" 
+                   x:Name="ArtistsSearchBar"
+                    Placeholder="Search for an artist"
+                    Text="{Binding SearchText, Mode=TwoWay}">
+        </SearchBar>
+        <CollectionView Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Grid.RowSpan="4"
+                        ItemsSource="{Binding ArtistsResult}"
+                        IsVisible="{Binding SearchIsVisible}">
             <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Artist">
-                        <Border Opacity="1"
+                <DataTemplate x:DataType="models:Artist">
+                    <Border Opacity="1"
                                 BackgroundColor="Beige">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding ArtistSelectionCommand, x:DataType=viewModels:EditConcertViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditConcertViewModel}}}"
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ArtistSelectionCommand, x:DataType=viewModels:EditConcertViewModel, Source={RelativeSource AncestorType={x:Type viewModels:EditConcertViewModel}}}"
                                                       CommandParameter="{Binding .}"/>
-                            </Border.GestureRecognizers>
-                            <HorizontalStackLayout>
-                                <Image Source="{Binding Images[0].Url}"
-                                            WidthRequest="65"
-                                            HeightRequest="65"
-                                            Aspect="AspectFill"/>
-                                <Label Text="{Binding Name}"
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout>
+                            <Image Source="{Binding Images[0].Url}"
+                                       HeightRequest="70"
+                                       WidthRequest="70"/>
+                            <Label Text="{Binding Name}"
                                         VerticalOptions="Center"/>
-                            </HorizontalStackLayout>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
         <Picker Grid.Row="1"
                 Grid.ColumnSpan="2"
+                IsVisible="{Binding SearchIsNotVisible}"
                 Title="Select stage"
                 ItemsSource="{Binding Stages}"
                 ItemDisplayBinding="{Binding Name, x:DataType=models:Stage}"
@@ -58,6 +61,7 @@
         <DatePicker x:Name="DayPicker" 
                     Grid.Row="2"
                     Grid.ColumnSpan="2"
+                    IsVisible="{Binding SearchIsNotVisible}"
                     Date="{Binding SelectedDay.StartDateTime}"
                     HorizontalOptions="Center"
                     MinimumDate="{Binding CurrentFestival.StartDate}"
@@ -70,7 +74,8 @@
             </DatePicker.Behaviors>
         </DatePicker>
         <Border Grid.Row="3"
-                Margin="10">
+                Margin="10"
+                IsVisible="{Binding SearchIsNotVisible}">
             <Picker x:Name="StartPicker" 
                     Title="Select start time"
                     ItemsSource="{Binding StartTimeSlots}"
@@ -86,7 +91,8 @@
         </Border>
         <Border Grid.Row="3"
                 Grid.Column="1"
-                Margin="10">
+                Margin="10"
+                IsVisible="{Binding SearchIsNotVisible}">
             <Picker x:Name="EndPicker" 
                     Title="Select end time"
                     ItemsSource="{Binding EndTimeSlots}"
@@ -101,6 +107,7 @@
             </Picker>
         </Border>
         <Button Grid.Row="4"
+                IsVisible="{Binding SearchIsNotVisible}"
                 Text="Delete"
                 VerticalOptions="Center"
                 WidthRequest="100"
@@ -109,6 +116,7 @@
                 Command="{Binding DeleteCommand}"/>
         <Button Grid.Row="4"
                 Grid.Column="1"
+                IsVisible="{Binding SearchIsNotVisible}"
                 Text="Save"
                 VerticalOptions="Center"
                 WidthRequest="100"
