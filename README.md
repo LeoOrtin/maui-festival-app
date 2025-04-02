@@ -1,4 +1,4 @@
-# MAUI Festival App
+# Festival Planner App
  
  
  ## 📌 Overview
