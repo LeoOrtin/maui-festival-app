@@ -11,9 +11,8 @@ namespace FestivalPlannerApp.Services;
 
 public class SpotifyService : ISpotifyService
 {
-    private readonly string clientId = Environment.GetEnvironmentVariable("CLIENT_ID") ?? string.Empty;
-    private readonly string clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET") ?? string.Empty;
-    const string redirectUri = "https://myapp/";
+    private const string clientId = Secrets.ClientId;
+    private const string redirectUri = "https://myapp/";
     private readonly HttpClient _client;
     private readonly JsonSerializerOptions _serializerOptions;
     public SpotifyService()
