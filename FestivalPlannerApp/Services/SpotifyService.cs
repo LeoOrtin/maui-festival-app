@@ -11,8 +11,8 @@ namespace FestivalPlannerApp.Services;
 
 public class SpotifyService : ISpotifyService
 {
-    const string clientId = Secrets.ClientId;
-    const string clientSecret = Secrets.ClientSecret;
+    private readonly string clientId = Environment.GetEnvironmentVariable("CLIENT_ID") ?? string.Empty;
+    private readonly string clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET") ?? string.Empty;
     const string redirectUri = "https://myapp/";
     private readonly HttpClient _client;
     private readonly JsonSerializerOptions _serializerOptions;
@@ -444,7 +444,7 @@ public class SpotifyService : ISpotifyService
             .Replace('+', '-')
             .Replace('/', '_');
     };
-    private static async Task<string?> GetAuthorizationCode()
+    private async Task<string?> GetAuthorizationCode()
     {
         string codeVerifier = generateRandomString(64);
         byte[] hashed = await sha256(codeVerifier);
@@ -454,14 +454,14 @@ public class SpotifyService : ISpotifyService
         Preferences.Set("code_verifier", codeVerifier);
 
         var queryParams = new Dictionary<string, string?>
-    {
-        { "response_type", "code" },
-        { "client_id", clientId },
-        { "scope", scope },
-        { "redirect_uri", redirectUri },
-        { "code_challenge_method", "S256" },
-        { "code_challenge", codeChallenge }
-    };
+        {
+            { "response_type", "code" },
+            { "client_id", clientId },
+            { "scope", scope },
+            { "redirect_uri", redirectUri },
+            { "code_challenge_method", "S256" },
+            { "code_challenge", codeChallenge }
+        };
         string authUrl = "https://accounts.spotify.com/authorize?" + string.Join("&",
         queryParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value ?? string.Empty)}"));
 
