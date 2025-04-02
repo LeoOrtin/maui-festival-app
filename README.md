@@ -1,6 +1,5 @@
 # MAUI Festival App
  
- ![MAUI Festival App](https://your-image-url.com) <!-- Add a relevant banner or screenshot -->
  
  ## 📌 Overview
  The **MAUI Festival App** is a cross-platform mobile application built with .NET MAUI that helps users organize music festivals based on their Spotify listening habits.
